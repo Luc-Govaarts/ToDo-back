@@ -5,7 +5,7 @@ const corsMiddleWare = require("cors");
 const bodyParserMiddleWare = express.json();
 const { PORT } = require("./config/constants");
 const authMiddleWare = require("./auth/middleware");
-
+const authRouter = require("./routers/auth");
 
 const app = express();
  /* We are configuring cors to accept all incoming requests
@@ -53,6 +53,7 @@ if (process.env.DELAY) {
  * and use it for specific routes
  */
 
+app.use("/", authRouter);
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
 });
