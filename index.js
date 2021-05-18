@@ -4,6 +4,7 @@ const loggerMiddleWare = require("morgan");
 const corsMiddleWare = require("cors");
 const bodyParserMiddleWare = express.json();
 const { PORT } = require("./config/constants");
+const authMiddleWare = require("./auth/middleware");
 
 
 const app = express();
