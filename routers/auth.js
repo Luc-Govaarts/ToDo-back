@@ -91,8 +91,7 @@ router.patch('/verify', async (req, res) => {
 
   try {
     const user = await User.findByPk(id)
-    console.log("CODE: ", code)
-    console.log("USER: ", user)
+
     !bcrypt.compareSync(code.toString(), user.verificationCode)
       ? res.status(400).send({ message: 'Please provide valid verification code' })
       : await user.update({ verified: true })
@@ -109,7 +108,8 @@ router.patch('/verify', async (req, res) => {
 // - checking if a token is (still) valid
 router.get('/me', authMiddleware, async (req, res) => {
 	// don't send back the password hash
-	delete req.user.dataValues['password']
+  delete req.user.dataValues['password']
+  delete req.user.dataValues['verificationCode']
 	res.status(200).send({ ...req.user.dataValues })
 })
 
