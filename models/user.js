@@ -22,7 +22,12 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
-    verificationCode: DataTypes.STRING
+    verificationCode: DataTypes.STRING,
+    verified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    }
   }, {
     sequelize,
     modelName: 'user',

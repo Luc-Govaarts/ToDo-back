@@ -63,8 +63,8 @@ router.post('/signup', async (req, res) => {
     })
     
     // don't send back the password hash or verification code hash
-    delete user.dataValues['password']
-    delete user.dataValues['verificationCode']
+    delete newUser.dataValues['password']
+    delete newUser.dataValues['verificationCode']
 
 		const token = toJWT({ userId: newUser.id })
 
@@ -81,6 +81,27 @@ router.post('/signup', async (req, res) => {
 		return res.status(400).send({ message: 'Something went wrong, sorry' })
 	}
 })
+
+router.patch('/verify', async (req, res) => {
+  const { code, id } = req.body
+
+  if (!code) {
+    return res.status(400).send({ message: 'Please provide valid verification code' })
+  }
+
+  try {
+    const user = await User.findbyPK(id)
+
+    !bcrypt.compareSync(code, user.verificationCode)
+      ? res.status(400).send({ message: 'Please provide valid verification code' })
+      : await user.update({ verified: true })
+
+  } catch (error) {
+    console.log(error)
+    return res.status(400).send({ message: 'Something went wrong, sorry' })
+  }
+})
+
 
 // The /me endpoint can be used to:
 // - get the users email & name using only their token
