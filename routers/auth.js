@@ -4,8 +4,9 @@ const { toJWT } = require("../auth/jwt");
 const authMiddleware = require("../auth/middleware");
 const User = require("../models/").user;
 const { SALT_ROUNDS, VERIFICATION_CODE } = require("../config/constants");
-
 const router = new Router();
+const mail = require("../nodemailer/mail")
+
 
 router.post("/login", async (req, res, next) => {
   try {
@@ -61,6 +62,8 @@ router.post("/signup", async (req, res) => {
     delete newUser.dataValues["password"]; // don't send back the password hash
 
     const token = toJWT({ userId: newUser.id });
+
+    mail.testMail()
 
     res.status(201).json({ token, ...newUser.dataValues });
   } catch (error) {
