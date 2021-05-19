@@ -1,8 +1,8 @@
-const mail = require('./config')
+const config = require('./config')
 
 const testMail = async () => {
     try {
-        await mail.transporter.sendMail({
+        await config.transporter.sendMail({
             from: '"Fred Foo 👻" <foo@example.com>', // sender address
             to: "lucgovaarts@hotmail.com", // list of receivers
             subject: "Hello ✔ test 1234", // Subject line
