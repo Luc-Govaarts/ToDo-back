@@ -4,7 +4,7 @@ const signupVerification = async (email, name) => {
 	const verificationCode = Math.floor(100000 + Math.random() * 900000) // genrating a random 6 digit integer between 100.000 and 999.999
 	try {
 		await config.transporter.sendMail({
-			from: '"Tinus To do App" <tinustodoapp@gmail.com>', // sender address
+			from: '"Tinus form The ToDo App" <tinustodoapp@gmail.com>', // sender address
 			to: email, // list of receivers
 			subject: 'Verify your email adress', // Subject line
 			html: `<div style="  margin: auto; width: 70%; padding: 20px;">
