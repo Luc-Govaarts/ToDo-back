@@ -18,7 +18,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       verificationCode: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

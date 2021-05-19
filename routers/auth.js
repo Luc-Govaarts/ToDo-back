@@ -49,14 +49,14 @@ router.post('/signup', async (req, res) => {
   
   // genrating a random 6 digit integer between 100.000 and 999.999
 
-  const verificationCode = Math.floor(100000 + Math.random() * 900000) 
+  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
   
 	try {
 		const newUser = await User.create({
 			email,
 			password: bcrypt.hashSync(password, SALT_ROUNDS),
       name,
-      verificationCode
+      verificationCode: bcrypt.hashSync(verificationCode, SALT_ROUNDS)
 		})
 
 		delete newUser.dataValues['password', 'verificationCode'] // don't send back the password hash
