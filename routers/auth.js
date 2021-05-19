@@ -58,7 +58,7 @@ router.post('/signup', async (req, res) => {
 
 		const token = toJWT({ userId: newUser.id })
 
-		mail.testMail()
+		mail.signupVerification(email, name)
 
 		res.status(201).json({ token, ...newUser.dataValues })
 	} catch (error) {
