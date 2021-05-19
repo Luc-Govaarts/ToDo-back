@@ -2,7 +2,9 @@ const config = require('./config')
 
 const signupVerification = async (email, name) => {
 	const verificationCode = Math.floor(100000 + Math.random() * 900000) // genrating a random 6 digit integer between 100.000 and 999.999
-	try {
+	
+    
+    try {
 		await config.transporter.sendMail({
 			from: '"Tinus form The ToDo App" <tinustodoapp@gmail.com>', // sender address
 			to: email, // list of receivers
