@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class user extends Model {
     /**
@@ -20,7 +18,10 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true 
     },
     name: DataTypes.STRING,
-    email: DataTypes.STRING,
+    email: {
+      type: DataTypes.STRING,
+      unique: true
+    },
     password: DataTypes.STRING,
     verificationCode: DataTypes.STRING,
     verified: {
