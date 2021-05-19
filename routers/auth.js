@@ -23,11 +23,11 @@ router.post('/login', async (req, res, next) => {
 			return res.status(400).send({
 				message: 'User with that email not found or password incorrect',
 			})
-    }
-    
-    // don't send back the password hash or verification code hash
-    delete user.dataValues['password']
-    delete user.dataValues['verificationCode']
+		}
+
+		// don't send back the password hash or verification code hash
+		delete user.dataValues['password']
+		delete user.dataValues['verificationCode']
 
 		const token = toJWT({ userId: user.id })
 		return res.status(200).send({ token, ...user.dataValues })
@@ -48,23 +48,25 @@ router.post('/signup', async (req, res) => {
 			.send({ message: 'Please provide an email, password, a name' })
 	} else if (VERIFICATION_CODE !== code) {
 		return res.status(400).send({ message: 'invalid verification key' })
-  }
-  
-  // genrating a random 6 digit integer between 100.000 and 999.999
+	}
 
-  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
-  
+	// genrating a random 6 digit integer between 100.000 and 999.999
+
+	const verificationCode = Math.floor(
+		100000 + Math.random() * 900000
+	).toString()
+
 	try {
 		const newUser = await User.create({
 			email,
 			password: bcrypt.hashSync(password, SALT_ROUNDS),
-      name,
-      verificationCode: bcrypt.hashSync(verificationCode, SALT_ROUNDS)
-    })
-    
-    // don't send back the password hash or verification code hash
-    delete newUser.dataValues['password']
-    delete newUser.dataValues['verificationCode']
+			name,
+			verificationCode: bcrypt.hashSync(verificationCode, SALT_ROUNDS),
+		})
+
+		// don't send back the password hash or verification code hash
+		delete newUser.dataValues['password']
+		delete newUser.dataValues['verificationCode']
 
 		const token = toJWT({ userId: newUser.id })
 
@@ -83,33 +85,38 @@ router.post('/signup', async (req, res) => {
 })
 
 router.patch('/verify', async (req, res) => {
-  const { code, id } = req.body
+	const { code, id } = req.body
 
-  if (!code) {
-    return res.status(400).send({ message: 'Please provide valid verification code' })
-  }
+	if (!code) {
+		return res
+			.status(400)
+			.send({ message: 'Please provide valid verification code' })
+	}
 
-  try {
-    const user = await User.findByPk(id)
+	try {
+		const user = await User.findByPk(id)
 
-    !bcrypt.compareSync(code.toString(), user.verificationCode)
-      ? res.status(400).send({ message: 'Please provide valid verification code' })
-      : await user.update({ verified: true })
-
-  } catch (error) {
-    console.log(error)
-    return res.status(400).send({ message: 'Something went wrong, sorry' })
-  }
+		if (!bcrypt.compareSync(code.toString(), user.verificationCode)) {
+			return res
+				.status(400)
+				.send({ message: 'Please provide valid verification code' })
+		} else {
+			await user.update({ verified: true })
+			return res.status(200).send({ ...user.dataValues })
+		}
+	} catch (error) {
+		console.log(error)
+		return res.status(400).send({ message: 'Something went wrong, sorry' })
+	}
 })
-
 
 // The /me endpoint can be used to:
 // - get the users email & name using only their token
 // - checking if a token is (still) valid
 router.get('/me', authMiddleware, async (req, res) => {
 	// don't send back the password hash
-  delete req.user.dataValues['password']
-  delete req.user.dataValues['verificationCode']
+	delete req.user.dataValues['password']
+	delete req.user.dataValues['verificationCode']
 	res.status(200).send({ ...req.user.dataValues })
 })
 
