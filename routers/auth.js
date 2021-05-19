@@ -90,9 +90,10 @@ router.patch('/verify', async (req, res) => {
   }
 
   try {
-    const user = await User.findbyPK(id)
-
-    !bcrypt.compareSync(code, user.verificationCode)
+    const user = await User.findByPk(id)
+    console.log("CODE: ", code)
+    console.log("USER: ", user)
+    !bcrypt.compareSync(code.toString(), user.verificationCode)
       ? res.status(400).send({ message: 'Please provide valid verification code' })
       : await user.update({ verified: true })
 
