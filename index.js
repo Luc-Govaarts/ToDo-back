@@ -6,6 +6,7 @@ const bodyParserMiddleWare = express.json();
 const { PORT } = require("./config/constants");
 const authMiddleWare = require("./auth/middleware");
 const authRouter = require("./routers/auth");
+const deleteNonVerifiedUsers = require('./auth/deleteNonVerifiedUsers');
 
 const app = express();
  /* We are configuring cors to accept all incoming requests
@@ -53,6 +54,7 @@ if (process.env.DELAY) {
  * and use it for specific routes
  */
 
+app.use(deleteNonVerifiedUsers)
 app.use("/", authRouter);
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
