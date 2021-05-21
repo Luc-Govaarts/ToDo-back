@@ -116,11 +116,12 @@ router.patch('/sendNewCode', async (req, res) => {
 	try {
 		// to do:
 		//	[X]	check if user has reties left
-		// 	[X] 	update verification code
-		//	[X] 	update number of retries
-		//	[]	send new email with code
+		// 	[X] update verification code
+		//	[X] update number of retries
+		//	[X]	send new email with code
+		//	[X]	delete sensitive data and return new user data
 		//	[]	setup auto delete in three days for accounts with 0 retries left
-		
+
 		const user = await User.findByPk(id)
 
 		if (user.retriesLeft > 0) {
@@ -130,9 +131,22 @@ router.patch('/sendNewCode', async (req, res) => {
 
 			await user.update({
 				verificationCode: bcrypt.hashSync(verificationCode, SALT_ROUNDS),
-				retriesLeft: user.retriesLeft - 1
+				retriesLeft: retriesLeft,
 			})
 
+			mail.signupVerification(user.email, user.name, verificationCode)
+
+			delete user.dataValues['password']
+			delete user.dataValues['verificationCode']
+
+			return res.status(200).send({
+				message: 'A new verification code was send to your inbox',
+				user: user.dataValues,
+			})
+		} else {
+			return res.status(400).send({
+				message: 'No retries left, account will be deleted in 24 hours',
+			})
 		}
 	} catch (error) {
 		console.log(error)
