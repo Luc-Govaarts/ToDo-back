@@ -120,7 +120,6 @@ router.patch('/sendNewCode', async (req, res) => {
 		//	[X] update number of retries
 		//	[X]	send new email with code
 		//	[X]	delete sensitive data and return new user data
-		//	[]	setup auto delete in three days for accounts with 0 retries left
 
 		const user = await User.findByPk(id)
 
