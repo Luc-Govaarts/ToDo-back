@@ -110,6 +110,24 @@ router.patch('/verify', async (req, res) => {
 	}
 })
 
+router.patch('/sendNewCode', authMiddleware, async (req, res) => {	
+	const { id, retriesLeft } = req.body
+
+	try {
+		// to do:
+		//	[]	check if user has reties left 
+		// 	[] 	update verification code
+		//	[] 	update number of retries
+		//	[]	send new email with code 
+		//	[]	setup auto delete in three days for accounts with 0 retries left  
+
+	} catch (error) {
+		console.log(error)
+		return res.status(400).send({ message: 'Something went wrong, sorry' })
+	}
+
+})
+
 // The /me endpoint can be used to:
 // - get the users email & name using only their token
 // - checking if a token is (still) valid
