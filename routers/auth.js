@@ -117,7 +117,7 @@ router.patch('/sendNewCode', async (req, res) => {
 		// to do:
 		//	[X]	check if user has reties left
 		// 	[X] 	update verification code
-		//	[] 	update number of retries
+		//	[X] 	update number of retries
 		//	[]	send new email with code
 		//	[]	setup auto delete in three days for accounts with 0 retries left
 		
@@ -127,9 +127,10 @@ router.patch('/sendNewCode', async (req, res) => {
 			const verificationCode = Math.floor(
 				100000 + Math.random() * 900000
 			).toString()
-			
+
 			await user.update({
 				verificationCode: bcrypt.hashSync(verificationCode, SALT_ROUNDS),
+				retriesLeft: user.retriesLeft - 1
 			})
 
 		}
