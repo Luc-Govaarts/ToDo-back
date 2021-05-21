@@ -110,27 +110,33 @@ router.patch('/verify', async (req, res) => {
 	}
 })
 
-router.patch('/sendNewCode', async (req, res) => {	
+router.patch('/sendNewCode', async (req, res) => {
 	const { id, retriesLeft } = req.body
 
 	try {
 		// to do:
-		//	[X]	check if user has reties left 
-		// 	[] 	update verification code
+		//	[X]	check if user has reties left
+		// 	[X] 	update verification code
 		//	[] 	update number of retries
-		//	[]	send new email with code 
-		//	[]	setup auto delete in three days for accounts with 0 retries left  
+		//	[]	send new email with code
+		//	[]	setup auto delete in three days for accounts with 0 retries left
+		
+		const user = await User.findByPk(id)
 
-		const user = await User.findByPK(id)
 		if (user.retriesLeft > 0) {
+			const verificationCode = Math.floor(
+				100000 + Math.random() * 900000
+			).toString()
+			
+			await user.update({
+				verificationCode: bcrypt.hashSync(verificationCode, SALT_ROUNDS),
+			})
 
 		}
-
 	} catch (error) {
 		console.log(error)
 		return res.status(400).send({ message: 'Something went wrong, sorry' })
 	}
-
 })
 
 // The /me endpoint can be used to:
