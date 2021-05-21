@@ -6,6 +6,7 @@ const User = require('../models/').user
 const { SALT_ROUNDS, VERIFICATION_CODE } = require('../config/constants')
 const router = new Router()
 const mail = require('../nodemailer/mail')
+const moment = require('moment')
 
 router.post('/login', async (req, res, next) => {
 	try {
@@ -122,12 +123,11 @@ router.patch('/sendNewCode', async (req, res) => {
 		//	[X]	delete sensitive data and return new user data
 
 		const user = await User.findByPk(id)
+		const verificationCode = Math.floor(
+			100000 + Math.random() * 900000
+		).toString()
 
-		if (user.retriesLeft > 0) {
-			const verificationCode = Math.floor(
-				100000 + Math.random() * 900000
-			).toString()
-
+		if (user.retriesLeft > 1) {
 			await user.update({
 				verificationCode: bcrypt.hashSync(verificationCode, SALT_ROUNDS),
 				retriesLeft: retriesLeft,
@@ -140,6 +140,22 @@ router.patch('/sendNewCode', async (req, res) => {
 
 			return res.status(200).send({
 				message: 'A new verification code was send to your inbox',
+				user: user.dataValues,
+			})
+		} else if (user.retriesLeft === 1) {
+			await user.update({
+				verificationCode: bcrypt.hashSync(verificationCode, SALT_ROUNDS),
+				retriesLeft: retriesLeft,
+				lastRetryUsed: moment(),
+			})
+
+			mail.signupVerification(user.email, user.name, verificationCode)
+
+			delete user.dataValues['password']
+			delete user.dataValues['verificationCode']
+
+			return res.status(200).send({
+				message: 'The last new verification code was send to your inbox',
 				user: user.dataValues,
 			})
 		} else {

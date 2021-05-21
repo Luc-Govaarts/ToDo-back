@@ -34,6 +34,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 3
     },
+    lastRetryUsed: {
+      type: DataTypes.DATE
+    },
   }, {
     sequelize,
     modelName: 'user',
