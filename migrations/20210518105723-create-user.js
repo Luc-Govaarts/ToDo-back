@@ -26,6 +26,14 @@ module.exports = {
         allowNull: false,
         defaultValue: false
       },
+      retriesLeft: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 3
+      },
+      lastRetryUsed: {
+        type: Sequelize.DATE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

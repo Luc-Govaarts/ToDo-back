@@ -6,6 +6,7 @@ const User = require('../models/').user
 const { SALT_ROUNDS, VERIFICATION_CODE } = require('../config/constants')
 const router = new Router()
 const mail = require('../nodemailer/mail')
+const moment = require('moment')
 
 router.post('/login', async (req, res, next) => {
 	try {
@@ -103,6 +104,64 @@ router.patch('/verify', async (req, res) => {
 		} else {
 			await user.update({ verified: true })
 			return res.status(200).send({ ...user.dataValues })
+		}
+	} catch (error) {
+		console.log(error)
+		return res.status(400).send({ message: 'Something went wrong, sorry' })
+	}
+})
+
+router.patch('/sendNewCode', async (req, res) => {
+	const { id, retriesLeft } = req.body
+
+	try {
+		// to do:
+		//	[X]	check if user has reties left
+		// 	[X] update verification code
+		//	[X] update number of retries
+		//	[X]	send new email with code
+		//	[X]	delete sensitive data and return new user data
+
+		const user = await User.findByPk(id)
+		const verificationCode = Math.floor(
+			100000 + Math.random() * 900000
+		).toString()
+
+		if (user.retriesLeft > 1) {
+			await user.update({
+				verificationCode: bcrypt.hashSync(verificationCode, SALT_ROUNDS),
+				retriesLeft: retriesLeft,
+			})
+
+			mail.signupVerification(user.email, user.name, verificationCode)
+
+			delete user.dataValues['password']
+			delete user.dataValues['verificationCode']
+
+			return res.status(200).send({
+				message: 'A new verification code was send to your inbox',
+				user: user.dataValues,
+			})
+		} else if (user.retriesLeft === 1) {
+			await user.update({
+				verificationCode: bcrypt.hashSync(verificationCode, SALT_ROUNDS),
+				retriesLeft: retriesLeft,
+				lastRetryUsed: moment(),
+			})
+
+			mail.signupVerification(user.email, user.name, verificationCode)
+
+			delete user.dataValues['password']
+			delete user.dataValues['verificationCode']
+
+			return res.status(200).send({
+				message: 'The last new verification code was send to your inbox',
+				user: user.dataValues,
+			})
+		} else {
+			return res.status(400).send({
+				message: 'No retries left, account will be deleted in 24 hours',
+			})
 		}
 	} catch (error) {
 		console.log(error)
