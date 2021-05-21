@@ -110,7 +110,7 @@ router.patch('/verify', async (req, res) => {
 	}
 })
 
-router.patch('/sendNewCode', authMiddleware, async (req, res) => {	
+router.patch('/sendNewCode', async (req, res) => {	
 	const { id, retriesLeft } = req.body
 
 	try {

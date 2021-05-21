@@ -28,7 +28,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
-    }
+    },
+    retriesLeft: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 3
+    },
   }, {
     sequelize,
     modelName: 'user',
