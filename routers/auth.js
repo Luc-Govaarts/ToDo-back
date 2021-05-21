@@ -115,11 +115,16 @@ router.patch('/sendNewCode', async (req, res) => {
 
 	try {
 		// to do:
-		//	[]	check if user has reties left 
+		//	[X]	check if user has reties left 
 		// 	[] 	update verification code
 		//	[] 	update number of retries
 		//	[]	send new email with code 
 		//	[]	setup auto delete in three days for accounts with 0 retries left  
+
+		const user = await User.findByPK(id)
+		if (user.retriesLeft > 0) {
+
+		}
 
 	} catch (error) {
 		console.log(error)
